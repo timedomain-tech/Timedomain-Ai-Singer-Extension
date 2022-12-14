@@ -1,0 +1,36 @@
+[package]
+version = "1.0.0"
+title = "TIMEDOMAIN AI SINGER"
+description="Timedomain Ai Singer is a convenient tool for singing synthesis on the Omniverse platform."
+readme  = "docs/README.md"
+repository = ""
+authors = ["timedomAIn"]
+category = "Audio"
+keywords = ["timedomain", "ai", "singer"]
+icon = "data/logo.png"
+preview_image = "data/preview.png"
+changelog = "docs/CHANGELOG.md"
+
+[dependencies]
+"omni.kit.uiapp" = {}
+"omni.audio2face.player_deps" = {}
+"omni.kit.window.filepicker" = {}
+
+[python.pipapi]
+# List of additional directories with pip achives to be passed into pip using ``--find-links`` arg.
+# Relative paths are relative to extension root. Tokens can be used.
+archiveDirs = ["path/to/pip_archive"]
+
+# Commands passed to pip install before extension gets enabled. Can also contain flags, like `--upgrade`, `--no--index`, etc.
+# Refer to: https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format
+requirements = [
+    "requests"
+]
+
+[[python.module]]
+name = "timedomain.ai.singer"
+
+[[test]]
+dependencies = [
+    "omni.kit.ui_test" # UI testing extension
+]
