@@ -6,6 +6,7 @@ _*/
 
 # byte-compiled python files
 # *.py[cod]
+/exts/timedomain.ai.singer/voice
 
 /.vs
 
