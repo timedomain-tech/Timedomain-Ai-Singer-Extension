@@ -510,6 +510,7 @@ class WaveformWidget(SimpleWidget):
             volume = np.maximum((volume / 50.0) + 1.0, 0.0)
             volume *= 0.7
         canvas = np.zeros((height, width_ex, 4), dtype=np.uint8)
+        print("canvas.shape[1]======>", canvas.shape[1])
         for x in range(canvas.shape[1]):
             start = int(round((1.0 - volume[x]) * float(height) / 2))
             end = int(round((1.0 + volume[x]) * float(height) / 2))
@@ -762,13 +763,16 @@ class TimelineWidget(BoolSettingWidgetBase):
 class TimecodeWidget(BoolSettingWidgetBase):
     def __init__(self):
         super().__init__()
+        self.ts = None
         self._timecode_lbl = None
         self._timecode_tms_lbl = None
         self._timecode_max_lbl = None
         self._timecode_max_tms_lbl = None
+        self._button_play_pause = ButtonPlayPause()
         self._update_sub = omni.kit.app.get_app().get_update_event_stream().create_subscription_to_pop(self._on_update)
 
     def shutdown(self):
+        self.ts = None
         self._update_sub = None
         self._timecode_lbl = None
         self._timecode_tms_lbl = None
@@ -794,6 +798,10 @@ class TimecodeWidget(BoolSettingWidgetBase):
         tmss_sub = tmss % 100
         m_sec_lbl.text = "{}:{:02d}".format(mins, secs_sub)
         tms_lbl.text = ".{:02d}".format(tmss_sub)
+        if self.ts is not None and t == self.ts:
+            self._button_play_pause._update_from_state(is_playing=False)
+        else:
+            self.ts = t
 
     def _on_update(self, *_):
         if self._timecode_lbl is not None and self._timecode_tms_lbl is not None:
@@ -805,25 +813,26 @@ class TimecodeWidget(BoolSettingWidgetBase):
 
 
 class ButtonPlayPause(BoolSettingWidgetBase):
+    _btn = None
+
     def __init__(self):
         super().__init__()
-        self._btn = None
 
     def shutdown(self):
-        self._btn = None
+        ButtonPlayPause._btn = None
         super().shutdown()
 
     def _build_widget(self):
         with ui.HStack(width=BTN_WIDTH, height=30):
-            self._btn = ui.Button(width=BTN_WIDTH, style=PlayBtnStyle, tooltip="Play/Pause (P)")
-            self._btn.set_clicked_fn(self._on_toggled)
+            ButtonPlayPause._btn = ui.Button(width=BTN_WIDTH, style=PlayBtnStyle, tooltip="Play/Pause (P)")
+            ButtonPlayPause._btn.set_clicked_fn(self._on_toggled)
 
     def _update_from_state(self, is_playing):
-        if self._btn is not None:
+        if ButtonPlayPause._btn is not None:
             if is_playing is True:
-                self._btn.set_style(PauseBtnStyle)
+                ButtonPlayPause._btn.set_style(PauseBtnStyle)
             else:
-                self._btn.set_style(PlayBtnStyle)
+                ButtonPlayPause._btn.set_style(PlayBtnStyle)
 
 
 class ButtonComposing(BoolSettingWidgetBase):
